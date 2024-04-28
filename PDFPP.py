@@ -12,11 +12,8 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtWidgets import QMessageBox
 from PySide6.QtGui import QIcon
 
-
 import HomeCheck_ui
 from HomeCheck_ui import Ui_MainWindow
-
-
 
 class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
 
@@ -31,40 +28,35 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
         self.create_check()
         ###self.init_UI()
 
-
     p = [0, 0, 0, 0, 0, 0, 0, 0]
     pk = ["Квартплата", "Телефон", "Электричество", "Охрана пульт", "Охрана тех", "Квартплата", "Телефон", "Электричество"]
-
     today = datetime.today()
     year = str(today.year)  ### 2024
     month = str(today.month)  ### 1
-    folder = 'E:/Документы/Дом/House_check/'
-        ###house = "House_check/"
+    folder = 'E:/Документы/Дом/House_check/' ###house = "House_check/"
     month = "4"
-        ### габариты бланка
+    ### габариты бланка
     list_x = 2480
     list_y = 3508
     ms = 0.75 ### коэфициент масштабирования листа
 
-    def date_check(self):
-        ### определение даты
+    def date_check(self):                                     ### определение даты
         if len(self.month) == 1:
-            self.month = "0" + self.month   ### 01
-        self.date = self.year + "_" + self.month   ###2024_01
+            self.month = "0" + self.month                     ### 01
+        self.date = self.year + "_" + self.month              ### 2024_01
 
     def report_folder_check(self):
-        self.report_folder = self.folder + self.year + "/"  ###  E:/Документы/Дом/House_main_check/2024/  путь до отчета
-        self.main_folder = self.report_folder + "Month/" + self.month + "/"  ###  E:/Документы/Дом/House_main_check/2024/Month/01/  путь до чеков
+        self.report_folder = self.folder + self.year + "/"                        ###  E:/Документы/Дом/House_main_check/2024/  путь до отчета
+        self.main_folder = self.report_folder + "Month/" + self.month + "/"       ###  E:/Документы/Дом/House_main_check/2024/Month/01/  путь до чеков
 
     ### Список наименований чеков
     ### "CP" - квартплата 
-    ### "TL"- телефон 
-    ### "El_1"- электричество 1 
-    ### "El_2"- электричество 2
+    ### "TL" - телефон 
+    ### "El" - электричество
+    ### "OXR_1" - охрана пульт 
+    ### "OXR_2" - охрана тех
 
     check = ["O_CP", "O_TL", "O_El", "O_OXR_1", "O_OXR_2", "T_CP", "T_TL", "T_El"]
-
-
 
     ###print(today)
     ###print(month)
@@ -80,10 +72,10 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
             input_d = PdfReader(open(pdf_d, 'rb'))
             page_d = input_d.pages[0]
             self.p[i] = 1
-        except FileNotFoundError:
-            self.p[i] = 0
         ### Если чек есть значение в контрольном списке меняем на 1, если нет- остается 0
         ### Если чек есть - возращаем чек, если нет - ни чего
+        except FileNotFoundError:
+            self.p[i] = 0
         if self.p[i] == 1:
             return page_d
         if self.p[i] == 0:
@@ -92,7 +84,6 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
     def create_check(self):
         ### Создаем пустой бланк-подложку
         page_0 = PageObject.create_blank_page(None, self.list_x, self.list_y)
-
         ###print("page_0 - ", page_0.mediabox.upper_right[0], page_0.mediabox.upper_right[1])
 
         ### Функция перемещения листа
@@ -110,7 +101,6 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
             return page_trSc
 
         ###  Вводим 4 чека
-
         page_1 = self.input_file(self.main_folder, self.check[0], 0)
         page_2 = self.input_file(self.main_folder, self.check[1], 1)
         page_3 = self.input_file(self.main_folder, self.check[2], 2)
@@ -121,7 +111,6 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
         page_8 = self.input_file(self.main_folder, self.check[7], 7)
 
         print(self.p)
-
         ### обработка чеков 1-4
         ### если чека нет - на подложку ни чего не приходит, выдается чистая подложка
 
@@ -135,7 +124,6 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
             page_01 = zero_page
             page_01 = trXY_def(page_01, smesh_x, self.list_y-check_size_y-smesh_y)
             smesh_x += 310
-
         else:
             page_01 = PageObject.create_blank_page(None, self.list_x, self.list_y)
 
@@ -177,7 +165,6 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
             page_05 = trXY_def(page_05, smesh_x, self.list_y-check_size_y-smesh_y)
         else:
             page_05 = PageObject.create_blank_page(None, self.list_x, self.list_y)
-
         ###окончена сборка 1 документа
 
         smesh_x = 0
@@ -211,18 +198,14 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
             page_08 = trXY_def(page_08, smesh_x, self.list_y-check_size_y-smesh_y)
         else:
             page_08 = PageObject.create_blank_page(None, self.list_x, self.list_y)
-
         ###окончена сборка 2 документа
 
         ### генерация надписей
-
         buffer_O = io.BytesIO()
-
         list_x_c = float(self.list_x)
         list_y_c = float(self.list_y)
         canvas_otstup_x = 20.0
         canvas_otstup_y = self.list_y - 40.0
-
         shag_canvas = 310
         H_max = 1700
 
@@ -232,7 +215,6 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
         list_canvas_O = canvas.Canvas(buffer_O, pagesize=(list_x_c, list_y_c))
         pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
         list_canvas_O.setFont('FreeSans', 16)  # Устанавливаем шрифт и размер
-
         list_canvas_O.drawString(canvas_otstup_x, self.list_y - 15.0, "Отрадное " + self.year + " " + self.month)  # Добавляем заголовок на страницу
 
         count = 0
@@ -248,15 +230,13 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
                     count += 1
                 smesh_x += shag_canvas
 
+        ### отрисовка рамки для обрезки
         list_canvas_O.setLineWidth(5)
         list_canvas_O.line(0,self.list_y - H_max, 0 + shag_canvas * count, self.list_y - H_max)
         list_canvas_O.line(0 + shag_canvas * count, self.list_y - H_max, 0 + shag_canvas * count, self.list_y)
-
-
         list_canvas_O.showPage()
         list_canvas_O.save()
         buffer_O.seek(0)
-
         pdf_list_canvas_O = PdfReader(buffer_O)
         zero_page_canvas_O = PageObject.create_blank_page(None, self.list_x, self.list_y)
         zero_page_canvas_O.merge_page(pdf_list_canvas_O.pages[0])
@@ -265,18 +245,15 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
         ### генерация надписей 2 документ
         smesh_x = 0
         canvas_otstup_x = 20.0
-
         buffer_T = io.BytesIO()
-
         list_x_t = float(self.list_x)
         list_y_t = float(self.list_y)
         canvas_otstup_x = 20.0
         canvas_otstup_y = self.list_y - 40.0
 
         list_canvas_T = canvas.Canvas(buffer_T, pagesize=(list_x_t, list_y_t))
-        pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+        pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf')) # регистрация шрифта
         list_canvas_T.setFont('FreeSans', 16)  # Устанавливаем шрифт и размер
-
         list_canvas_T.drawString(canvas_otstup_x, self.list_y - 15.0, "Тушино " + self.year + " " + self.month)  # Добавляем заголовок на страницу
 
         count = 0
@@ -287,14 +264,13 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
                 smesh_x += shag_canvas
                 count += 1
 
+        ### отрисовка рамки для обрезки
         list_canvas_T.setLineWidth(5)
         list_canvas_T.line(0, self.list_y - H_max, 0 + shag_canvas * count, self.list_y - H_max)
         list_canvas_T.line(0 + shag_canvas * count, self.list_y - H_max, 0 + shag_canvas * count , self.list_y)
-
         list_canvas_T.showPage()
         list_canvas_T.save()
         buffer_T.seek(0)
-
         pdf_list_canvas_T = PdfReader(buffer_T)
         zero_page_canvas_T = PageObject.create_blank_page(None, self.list_x, self.list_y)
         zero_page_canvas_T.merge_page(pdf_list_canvas_T.pages[0])
@@ -331,12 +307,10 @@ class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
         output2.write(open(self.report_folder + self.date + "_T.pdf", "wb")) ###путь сохраняемого отчета E:/Документы/Дом/House_main_check/2024/2024_01.pdf  путь до отчета
         print("Report  File:" + self.report_folder + self.date + "_T.pdf - created!")
 
-
-
-
 def main(): 
     app = QtWidgets.QApplication()
     mainwindow = ExampleApp()
     mainwindow.show()
     sys.exit(app.exec())
 main()
+
