@@ -18,13 +18,6 @@ from HomeCheck_ui import Ui_MainWindow
 
 
 
-'''
-class ExpenseTracker(QMainWindow):
-    def __init__(self):
-        super(ExpenseTracker, self).__init__()
-        self.ui = Ui_MainWindow
-        self.ui.setupUI(self)
-'''
 class ExampleApp(QtWidgets.QMainWindow, HomeCheck_ui.Ui_MainWindow):
 
     p = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -339,11 +332,3 @@ main()
 
 
 
-'''
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = ExpenseTracker
-    window.show()
-
-    sys.exit(app.exec())
-'''
